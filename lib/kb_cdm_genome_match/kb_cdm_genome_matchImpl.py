@@ -86,7 +86,7 @@ class kb_cdm_genome_match:
 
         genomeset_ref = params['genomeset_ref']
 
-        if params['run_gtdb'] == '1':
+        if params['run_gtdb'] == 1:
             gtdb_params = {
                 "workspace_id": params['workspace_id'],
                 "input_object_ref": genomeset_ref,
