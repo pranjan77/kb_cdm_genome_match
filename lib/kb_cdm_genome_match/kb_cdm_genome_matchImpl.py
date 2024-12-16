@@ -84,7 +84,7 @@ class kb_cdm_genome_match:
 
 
 
-        genomeset_ref = params['input_object_ref']
+        genomeset_ref = params['genomeset_ref']
         workspace = params['workspace_name']
         processor = GenomeSetProcessor(ctx['token'], self.ws_url)
         output_directory = os.path.join(self.shared_folder, "output")

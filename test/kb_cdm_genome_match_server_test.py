@@ -288,7 +288,7 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         self.clean_scratch_dir()
         report = self.serviceImpl.run_kb_cdm_genome_match(self.ctx, { \
                                                                 'workspace_name': self.wsName,
-                                                                'input_object_ref': "75051/19/2",
+                                                                'genomeset_ref': "75051/19/2",
                                                                 'output_tree_basename': 'CDM_Match_Tree',
                                                                 'copy_proximals': 0,
                                                                 'save_trees': 0,
