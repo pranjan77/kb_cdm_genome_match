@@ -97,8 +97,8 @@ class kb_cdm_genome_match:
             "dendrogram_report": "1"
            }
 
-         gtdb_util = kb_gtdbtk(self.callback_url)
-         report = gtdb_util.run_kb_gtdbtk_classify_wf(params)
+        gtdb_util = kb_gtdbtk(self.callback_url)
+        report = gtdb_util.run_kb_gtdbtk_classify_wf(params)
 
 
         genomeset_ref = params['genomeset_ref']
