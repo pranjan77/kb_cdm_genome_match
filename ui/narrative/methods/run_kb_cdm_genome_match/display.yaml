@@ -32,6 +32,12 @@ parameters :
            GenomeSet 
         short-hint : |
            GenomeSet
+    run_gtdb :
+        ui-name : |
+           Run GTDB  
+        short-hint : |
+           Run GTDB
+
 
 description : |
     <p>CDM Genome Match.</p>

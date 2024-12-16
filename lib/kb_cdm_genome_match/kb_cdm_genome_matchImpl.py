@@ -84,37 +84,50 @@ class kb_cdm_genome_match:
         # Print statements to stdout/stderr are captured and available as the App log
         logging.info('Starting run_kb_cdm_genome_match function. Params=' + pformat(params))
 
-        gtdb_params = {
-            "workspace_id": params['workspace_id'],
-            "input_object_ref": params['genomeset_ref'],
-            "output_tree_basename": "GTDB_Tree",
-            "copy_proximals": "0",
-            "save_trees": "0",
-            "min_perc_aa": 10,
-            "db_ver": "214",
-            "keep_intermediates": "0",
-            "overwrite_tax": "1",
-            "dendrogram_report": "1"
-           }
+        genomeset_ref = params['genomeset_ref']
+
+        if params['run_gtdb'] == '1':
+            gtdb_params = {
+                "workspace_id": params['workspace_id'],
+                "input_object_ref": genomeset_ref,
+                "output_tree_basename": "GTDB_Tree",
+                "copy_proximals": "0",
+                "save_trees": "0",
+                "min_perc_aa": 10,
+                "db_ver": "214",
+                "keep_intermediates": "0",
+                "overwrite_tax": "1",
+                "dendrogram_report": "0"
+            }
         
-        gtdb_util = kb_gtdbtk(self.callback_url)
-        gtdb_report = gtdb_util.run_kb_gtdbtk_classify_wf(gtdb_params)
+            gtdb_util = kb_gtdbtk(self.callback_url)
+            gtdb_report = gtdb_util.run_kb_gtdbtk_classify_wf(gtdb_params)
 
-        print ("report follows")
-        print (gtdb_report)
+            print ("report follows")
+            print (gtdb_report)
+        else:
+            logging.info('Not running GTDB')
 
 
-
-        genomeset_ref = "75058/2/2"
+        #genomeset_ref = "75058/2/2"
         #genomeset_ref = params['genomeset_ref']
+
+        logging.info('Finding GTDB Taxonomy informtaion in Genomes')
         workspace = params['workspace_name']
         processor = GenomeSetProcessor(ctx['token'], self.ws_url)
+
+        gtdb_updated_genomeset_ref = processor.get_updated_genomeset_ref(genomeset_ref)
+
+
+
         output_directory = os.path.join(self.shared_folder, "output_cdm_match")
-        parsed_data = processor.fetch_genomeset_data(genomeset_ref)
+        parsed_data = processor.fetch_genomeset_data(gtdb_updated_genomeset_ref)
         json_path = processor.generate_json(parsed_data, output_directory)
         html_path = processor.generate_html(parsed_data, output_directory)
         print(f"JSON file is saved at: {json_path}")
         print(f"Interactive HTML file is saved in: {html_path}")
+
+        logging.info('Saving report')
 
         report_creator = HTMLReportCreator(self.callback_url)
         output = report_creator.create_html_report(output_directory, workspace)

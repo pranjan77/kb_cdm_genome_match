@@ -80,6 +80,37 @@ class GenomeSetProcessor:
 
 
         return json_file_path
+    
+
+    def get_updated_genomeset_ref(self, genomeset_ref):
+        """
+        Given a genomeset_ref, calculate the new_genomeset_ref by incrementing its version.
+        
+        Args:
+            ws (Workspace): KBase Workspace client instance.
+            genomeset_ref (str): Reference to the genome set in the format "workspace_id/object_id/version".
+            
+        Returns:
+            str: The new_genomeset_ref in the format "workspace_id/object_id/new_version".
+        """
+        # Get the genome set information
+        genome_info = self.ws.get_object_info3({
+            "objects": [{"ref": genomeset_ref}]
+        })['infos'][0]
+        
+        # Construct the genome reference
+        genome_ref = f"{genome_info[7]}/{genome_info[1]}"
+        
+        # Get the genome information
+        ginfo = self.ws.get_object_info3({
+            "objects": [{"ref": genome_ref}]
+        })['infos'][0]
+        
+        # Construct the new genome set reference
+        new_genomeset_ref = f"{ginfo[6]}/{ginfo[0]}/{ginfo[4]}"
+        return new_genomeset_ref
+
+
 
     def generate_html(self, parsed_data_list, folder_path):
         """

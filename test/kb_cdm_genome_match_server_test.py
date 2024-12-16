@@ -69,8 +69,8 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         #cls.wsid = ret[0]
         #print (cls.wsid)
 
-        cls.wsName = "pranjan77:narrative_1734299479897"
-        cls.wsid = 75051
+        cls.wsName = "pranjan77:narrative_1734343659827"
+        cls.wsid = 75058
         
         cls.hs = AbstractHandle(cls.cfg['handle-service-url'], token=cls.token)
         cls.au = AssemblyUtil(cls.callback_url, token=cls.token)
@@ -288,14 +288,10 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         self.clean_scratch_dir()
         report = self.serviceImpl.run_kb_cdm_genome_match(self.ctx, { \
                                                                 'workspace_id': self.wsid,
+                                                                'run_gtdb': 0,
                                                                 'workspace_name': self.wsName,
-                                                                'genomeset_ref': "75051/19/2",
-                                                                'output_tree_basename': 'CDM_Match_Tree',
-                                                                'copy_proximals': 0,
-                                                                'save_trees': 0,
-                                                                'db_ver': 214,
-                                                                'keep_intermediates': 0,
-                                                                'dendrogram_report': 0         
+                                                                'genomeset_ref': "75051/19/2"
+                                               
                                                             })[0]
         #assert self.isUpa (report['report_ref'])
 
