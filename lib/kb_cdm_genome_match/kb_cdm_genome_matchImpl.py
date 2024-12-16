@@ -85,7 +85,7 @@ class kb_cdm_genome_match:
         logging.info('Starting run_kb_cdm_genome_match function. Params=' + pformat(params))
 
         gtdb_params = {
-            "workspace_id": params['worskpace_id'],
+            "workspace_id": params['workspace_id'],
             "input_object_ref": params['genomeset_ref'],
             "output_tree_basename": "GTDB_Tree",
             "copy_proximals": "0",
