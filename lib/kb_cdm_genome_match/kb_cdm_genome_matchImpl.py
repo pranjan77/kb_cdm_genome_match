@@ -16,6 +16,8 @@ from kb_cdm_genome_match.core.html_report_creator import HTMLReportCreator
 from kb_cdm_genome_match.core.genomeset_processor import GenomeSetProcessor
 from kb_cdm_genome_match.core.kb_client_set import KBClients
 from installed_clients.KBaseReportClient import KBaseReport
+from installed_clients.kb_gtdbtkClient import kb_gtdbtk
+
 #END_HEADER
 
 
@@ -82,6 +84,21 @@ class kb_cdm_genome_match:
         # Print statements to stdout/stderr are captured and available as the App log
         logging.info('Starting run_kb_cdm_genome_match function. Params=' + pformat(params))
 
+        params = {
+            "workspace_id": 75051,
+            "input_object_ref": "75051/19/1",
+            "output_tree_basename": "GTDB_Tree",
+            "copy_proximals": "0",
+            "save_trees": "0",
+            "min_perc_aa": 10,
+            "db_ver": "214",
+            "keep_intermediates": "0",
+            "overwrite_tax": "1",
+            "dendrogram_report": "1"
+           }
+
+         gtdb_util = kb_gtdbtk(self.callback_url)
+         report = gtdb_util.run_kb_gtdbtk_classify_wf(params)
 
 
         genomeset_ref = params['genomeset_ref']
