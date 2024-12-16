@@ -84,9 +84,9 @@ class kb_cdm_genome_match:
         # Print statements to stdout/stderr are captured and available as the App log
         logging.info('Starting run_kb_cdm_genome_match function. Params=' + pformat(params))
 
-        params = {
-            "workspace_id": 75051,
-            "input_object_ref": "75051/19/1",
+        gtdb_params = {
+            "workspace_id": params['worskpace_id'],
+            "input_object_ref": params['genomeset_ref'],
             "output_tree_basename": "GTDB_Tree",
             "copy_proximals": "0",
             "save_trees": "0",
@@ -96,15 +96,20 @@ class kb_cdm_genome_match:
             "overwrite_tax": "1",
             "dendrogram_report": "1"
            }
-
+        
         gtdb_util = kb_gtdbtk(self.callback_url)
-        report = gtdb_util.run_kb_gtdbtk_classify_wf(params)
+        gtdb_report = gtdb_util.run_kb_gtdbtk_classify_wf(params)
+
+        print ("report follows")
+        print (gtdb_report)
 
 
-        genomeset_ref = params['genomeset_ref']
+
+        genomeset_ref = "75058/2/2"
+        #genomeset_ref = params['genomeset_ref']
         workspace = params['workspace_name']
         processor = GenomeSetProcessor(ctx['token'], self.ws_url)
-        output_directory = os.path.join(self.shared_folder, "output")
+        output_directory = os.path.join(self.shared_folder, "output_cdm_match")
         parsed_data = processor.fetch_genomeset_data(genomeset_ref)
         json_path = processor.generate_json(parsed_data, output_directory)
         html_path = processor.generate_html(parsed_data, output_directory)
