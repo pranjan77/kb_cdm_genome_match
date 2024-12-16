@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: CDM Genome Similarity
+name: CDM Genome Finder
 tooltip: |
-    CDM Genome Similarity
+    CDM Genome Finder
 screenshots: []
 
 icon: null
