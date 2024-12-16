@@ -1,0 +1,37 @@
+#
+# define display information
+#
+name: CDM Genome Similarity
+tooltip: |
+    CDM Genome Similarity
+screenshots: []
+
+icon: null
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            [annotate_contigset]
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    genomeset_ref :
+        ui-name : |
+           GenomeSet 
+        short-hint : |
+           GenomeSet
+
+description : |
+    <p>CDM Genome Match.</p>

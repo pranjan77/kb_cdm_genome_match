@@ -1,0 +1,37 @@
+[ {
+  "module_name" : "AbstractHandle",
+  "type" : "core",
+  "file_path" : "https://raw.githubusercontent.com/kbase/handle_service2/develop/handle_service.spec"
+}, {
+  "module_name" : "AssemblyUtil",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "DataFileUtil",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "GenomeFileUtil",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "kb_gtdbtk",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "KBaseReport",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "MetagenomeUtils",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "SetAPI",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
+  "module_name" : "Workspace",
+  "type" : "core",
+  "file_path" : "https://raw.githubusercontent.com/kbase/workspace_deluxe/master/workspace.spec"
+} ]
