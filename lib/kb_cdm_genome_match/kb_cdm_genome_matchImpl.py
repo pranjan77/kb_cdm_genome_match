@@ -98,7 +98,7 @@ class kb_cdm_genome_match:
            }
         
         gtdb_util = kb_gtdbtk(self.callback_url)
-        gtdb_report = gtdb_util.run_kb_gtdbtk_classify_wf(params)
+        gtdb_report = gtdb_util.run_kb_gtdbtk_classify_wf(gtdb_params)
 
         print ("report follows")
         print (gtdb_report)
