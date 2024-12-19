@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <title> FastANI Results </title>
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.9.1/css/tachyons.min.css"/>
+  <style>
+    * {
+      font-family: sans;
+    }
+    body {
+      margin: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class='f2'> FastANI Results </h1>
+  <p> Successfully queried every assembly. Results are sorted by ANI Match, with the highest match at the bottom. </p>
+  <p> Note: No ANI output is reported for a genome pair if the ANI value is much below 80%.
+      See the documentation for more information.</p>
+
+  <table class='collapse ba br2 b--black-10 pv2 ph3'>
+    <thead><tr>
+      {% for item in headers %}
+      <th class='pv2 ph3 tl f6 fw6 ttu'>{{ item }}</th>
+      {% endfor %}
+    </tr></thead>
+    <tbody>
+      {% for item in results %}
+      <tr class='striped--near-white'>
+        <td class='pv2 ph3'>{{ item.query_path }}</td>
+        <td class='pv2 ph3'>{{ item.reference_path }}</td>
+        <td class='pv2 ph3'>{{ item.percentage_match }}</td>
+        <td class='pv2 ph3'>{{ item.orthologous_matches }}</td>
+        <td class='pv2 ph3'>{{ item.total_fragments }}</td>
+        <td class='pv2 ph3'><a href="{{ item.viz_filename }}" target="_blank">PDF</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>
