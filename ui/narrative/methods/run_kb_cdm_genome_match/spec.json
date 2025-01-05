@@ -55,13 +55,13 @@
 					"options": [
 						{
 							"value": "genus",
-							"display": "yes",
+							"display": "genus",
 							"id": "genus",
 							"ui-name": "genus"
 						},
 						{
 							"value": "species",
-							"display": "no",
+							"display": "species",
 							"id": "species",
 							"ui-name": "species"
 						}
