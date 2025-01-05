@@ -32,6 +32,41 @@
                 "checked_value": 1,
                 "unchecked_value": 0
             }
+        },
+        {
+            "id": "max_count",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values":["10"],
+			"field_type": "text",
+			"text_options": {
+				"validate_as": "int"
+			}
+        },
+        {
+            "id": "max_level",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values":["genus"],
+            "field_type" : "dropdown",
+            "dropdown_options": {
+					"options": [
+						{
+							"value": "genus",
+							"display": "yes",
+							"id": "genus",
+							"ui-name": "genus"
+						},
+						{
+							"value": "species",
+							"display": "no",
+							"id": "species",
+							"ui-name": "species"
+						}
+					]
+				}
         }
         
     ],
@@ -54,6 +89,12 @@
                 },{
                     "input_parameter": "run_gtdb",
                     "target_property": "run_gtdb"
+                },{
+                    "input_parameter": "max_count",
+                    "target_property": "max_count"
+                },{
+                    "input_parameter": "max_level",
+                    "target_property": "max_level"
                 }
             ],
             "output_mapping": [

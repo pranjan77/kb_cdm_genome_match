@@ -69,8 +69,15 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         #cls.wsid = ret[0]
         #print (cls.wsid)
 
+        #appdev
+
         cls.wsName = "pranjan77:narrative_1734343659827"
         cls.wsid = 75058
+
+        # narrative
+
+        cls.wsName = "pranjan77:narrative_1735963780185"
+        cls.wsid = 202936
         
         cls.hs = AbstractHandle(cls.cfg['handle-service-url'], token=cls.token)
         cls.au = AssemblyUtil(cls.callback_url, token=cls.token)
@@ -281,7 +288,6 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
 
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
     def test_run_kb_cdm_genome_match_ok(self):
         # call your implementation
         
@@ -290,7 +296,9 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
                                                                 'workspace_id': self.wsid,
                                                                 'run_gtdb': 0,
                                                                 'workspace_name': self.wsName,
-                                                                'genomeset_ref': "75051/19/2"
+                                                                'genomeset_ref': "202936/109/1",
+                                                                'max_count':2,
+                                                                'max_level': "genus"
                                                
                                                             })[0]
         #assert self.isUpa (report['report_ref'])

@@ -37,6 +37,16 @@ parameters :
            Run GTDB  
         short-hint : |
            Run GTDB
+    max_count :
+        ui-name : |
+           max_count  
+        short-hint : |
+           max_count
+    max_level :
+        ui-name : |
+           max_level  
+        short-hint : |
+           max_level
 
 
 description : |

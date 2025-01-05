@@ -18,10 +18,18 @@ from kb_cdm_genome_match.core.kb_client_set import KBClients
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.kb_gtdbtkClient import kb_gtdbtk
 
+from .utils.fast_ani_processor import process_genomes
+from .utils.fast_ani_processor import parse_and_write_fastani_output
+from .utils.fast_ani_processor import prepare_html
+from .utils.fast_ani_processor import get_taxonomy_all_refs 
+
+
 from .utils.fast_ani_proc import run_fast_ani_pairwise
 from .utils.fast_ani_output import get_result_data
 from .utils.downloader import download_fasta
 from .utils.fast_ani_report import create_report
+
+from .utils.taxonomy_matcher import find_related_genomes_multiple
 
 from installed_clients.WorkspaceClient import Workspace
 
@@ -94,13 +102,14 @@ class kb_cdm_genome_match:
         logging.info('Starting run_kb_cdm_genome_match function. Params=' + pformat(params))
 
         genomeset_ref = params['genomeset_ref']
+        max_count = params['max_count']
+        max_level = params['max_level']
+
         output_directory = os.path.join(self.shared_folder, "output_cdm_match")
+        os.makedirs(output_directory, exist_ok=True)
         workspace = params['workspace_name']
 
         # Setting up GTDB run
-
-        """
-
         if params['run_gtdb'] == 1:
             gtdb_params = {
                 "workspace_id": params['workspace_id'],
@@ -123,64 +132,30 @@ class kb_cdm_genome_match:
         else:
             logging.info('Not running GTDB')
 
-
-        #genomeset_ref = "75058/2/2"
-        #genomeset_ref = params['genomeset_ref']
-
         logging.info('Finding GTDB Taxonomy informtaion in Genomes')
-        
+
         processor = GenomeSetProcessor(ctx['token'], self.ws_url)
         gtdb_updated_genomeset_ref = processor.get_updated_genomeset_ref(genomeset_ref)
-        
-        parsed_data = processor.fetch_genomeset_data(gtdb_updated_genomeset_ref)
-        json_path = processor.generate_json(parsed_data, output_directory)
-        html_path = processor.generate_html(parsed_data, output_directory)
-        print(f"JSON file is saved at: {json_path}")
-        print(f"Interactive HTML file is saved in: {html_path}")
-        """
-
-
-        # Running fastani
-
-        # Fetch the GenomeSet object
-        genomeset_object = self.ws.get_objects2({
-            "objects": [{"ref": genomeset_ref}]
-        })
-
-        # Extract the genome elements
-        genome_refs = list()
-        genome_in_set =genomeset_object["data"][0]["data"]["elements"]
-        for g in genome_in_set:
-            ref = genome_in_set[g]['ref']
-            genome_refs.append(ref)
-                           
-
-
-        print (genome_refs)
-
-        genome_refs = ['75058/39/1', '75058/17/2']
-        os.makedirs(output_directory, exist_ok=True)
-        paths = download_fasta(genome_refs, self.callback_url)
-        output_paths = run_fast_ani_pairwise(output_directory, paths)
-
-        print (output_paths)
-        result_data = get_result_data(output_paths, debug=False)
-        output = create_report(self.callback_url, output_directory, workspace, result_data)
-        print (output)
-
-
-
-
-
-        logging.info('Saving report')
-
+        genomeset_taxonomy_data = processor.fetch_genomeset_data(gtdb_updated_genomeset_ref)
+        taxon_assignments = [genome['gtdb_lineage'] for genome in genomeset_taxonomy_data]
+        logging.info (taxon_assignments)
+        outx, related_genomes_only_dict = find_related_genomes_multiple(taxon_assignments, max_count, max_level)
+        logging.info (outx)
+        logging.info (genomeset_taxonomy_data)
+        logging.info (related_genomes_only_dict)
+        output = dict()
+        allpaths = process_genomes(genomeset_taxonomy_data, related_genomes_only_dict, output_directory, self.callback_url)
+        taxonomy_dict = get_taxonomy_all_refs (genomeset_taxonomy_data, related_genomes_only_dict)
+        output_csv_path = os.path.join(output_directory, "output.csv")
+        output_html = os.path.join(output_directory, "index.html")
+        parse_and_write_fastani_output(allpaths, taxonomy_dict, output_csv_path)
+        prepare_html(output_csv_path, output_html)
+        logging.info (output_html)
+        logging.info (output_csv_path)
+        logging.info (allpaths)
         report_creator = HTMLReportCreator(self.callback_url)
         output = report_creator.create_html_report(output_directory, workspace)
-
-        print (output)
-
- 
- 
+        logging.info (output)
 
 
 
