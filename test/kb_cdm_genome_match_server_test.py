@@ -76,8 +76,8 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
 
         # narrative
 
-        cls.wsName = "pranjan77:narrative_1735963780185"
-        cls.wsid = 202936
+        #cls.wsName = "pranjan77:narrative_1735963780185"
+        #cls.wsid = 202936
         
         cls.hs = AbstractHandle(cls.cfg['handle-service-url'], token=cls.token)
         cls.au = AssemblyUtil(cls.callback_url, token=cls.token)
@@ -296,7 +296,7 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
                                                                 'workspace_id': self.wsid,
                                                                 'run_gtdb': 0,
                                                                 'workspace_name': self.wsName,
-                                                                'genomeset_ref': "202936/109/1",
+                                                                'genomeset_ref': "75058/2/3",
                                                                 'max_count':2,
                                                                 'max_level': "genus"
                                                

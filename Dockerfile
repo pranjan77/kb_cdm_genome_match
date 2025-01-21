@@ -51,6 +51,11 @@ RUN mkdir -p /kb/module/work
 RUN chmod -R a+rw /kb/module
 WORKDIR /kb/module
 
+
+RUN mkdir /data && \
+    mkdir /data/CDM
+
+
 RUN make all
 
 ENTRYPOINT [ "./scripts/entrypoint.sh" ]

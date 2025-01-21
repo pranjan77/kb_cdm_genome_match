@@ -2,17 +2,31 @@
 import os
 import csv
 import pandas as pd
+import uuid
 
 from .fast_ani_proc import run_fast_ani_pairwise
 from .downloader import download_fasta
 
+import hashlib
+
+from pprint import pprint, pformat
+import logging
+logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
+                            level=logging.INFO)
+
+
 
 
 def process_genomes(genomeset_taxonomy_data, related_genomes_only_dict, output_base_dir, callback_url):
+    related_path_dict = dict()
     allpaths = list()
     for genome_data in genomeset_taxonomy_data:
         genome_ref = genome_data['genome_ref']
         taxonomy = genome_data['gtdb_lineage']
+
+        logging.info("xxgenome_ref" + pformat(genomeset_taxonomy_data) )
+        logging.info("xxrelated_genomes_only_dict" + pformat(related_genomes_only_dict) )
+
 
         if taxonomy not in related_genomes_only_dict:
             print(f"No related genomes found for taxonomy: {taxonomy}")
@@ -24,22 +38,32 @@ def process_genomes(genomeset_taxonomy_data, related_genomes_only_dict, output_b
         output_directory = os.path.join(output_base_dir, genome_ref.replace("/", "_"))
         os.makedirs(output_directory, exist_ok=True)
 
-        for related_ref in related_refs:
+        for related_ref_path in related_refs:
             # Ensure unique output for each pair
-            pair_output_dir = os.path.join(output_directory, related_ref.replace("/", "_"))
+            unique_related_id = hashlib.sha256(related_ref_path.encode()).hexdigest() 
+            related_path_dict[unique_related_id] = related_ref_path
+            pair_output_dir = os.path.join(output_directory, str(unique_related_id))
             os.makedirs(pair_output_dir, exist_ok=True)
-            print ([genome_ref, related_ref])
+            print ([genome_ref, related_ref_path])
+
+
+            genome_ref_path = download_fasta([genome_ref], callback_url)[0]
+            paths = [genome_ref_path, related_ref_path]
+
 
             # Run Fast ANI for the pair
-            paths = download_fasta([genome_ref, related_ref], callback_url)
+            #paths = download_fasta([genome_ref, related_ref], callback_url)
             print (paths)
             
             output_paths = run_fast_ani_pairwise(pair_output_dir, paths)
+            logging.info("ouput_paths " + pformat(output_paths) )
 
 
             allpaths.append(output_paths)
+            logging.info("allpaths " + pformat(allpaths) )
 
-    return (allpaths)
+
+    return (allpaths, related_path_dict)
 
 
 def get_taxonomy_all_refs (genomeset_taxonomy, related_genomes_only_dict):
@@ -53,16 +77,18 @@ def get_taxonomy_all_refs (genomeset_taxonomy, related_genomes_only_dict):
         taxonomy_dict[genome_ref] = gtdb_lineage
 
     for gtdb_lineage in related_genomes_only_dict:
-        genome_refs = related_genomes_only_dict[gtdb_lineage]
-        for genome_ref in genome_refs:
-            taxonomy_dict[genome_ref] = gtdb_lineage
+        related_ref_paths = related_genomes_only_dict[gtdb_lineage]
+        for related_ref_path in related_ref_paths:
+            unique_related_id = hashlib.sha256(related_ref_path.encode()).hexdigest() 
+
+            taxonomy_dict[unique_related_id] = gtdb_lineage
 
     return taxonomy_dict
 
 
 
 
-def parse_and_write_fastani_output(file_lists, taxonomy_dict, output_csv_path):
+def parse_and_write_fastani_output(file_lists, related_path_dict, taxonomy_dict, output_csv_path):
     """
     Parses FastANI output from a list of file pairs and writes the processed data to a CSV file.
 
@@ -114,7 +140,8 @@ def parse_and_write_fastani_output(file_lists, taxonomy_dict, output_csv_path):
         image_path2 = f"{alignment_path2}.pdf"
 
         input_ref = input_ref.replace("_", "/")
-        related_ref = related_ref.replace("_", "/")
+        #related_ref = related_ref.replace("_", "/")
+        related_genome_path = related_path_dict[related_ref]
 
         input_taxonomy = taxonomy_dict[input_ref]
         related_taxonomy = taxonomy_dict[related_ref]
@@ -125,8 +152,8 @@ def parse_and_write_fastani_output(file_lists, taxonomy_dict, output_csv_path):
             'input_ref': input_ref,
             'input_name': input_name,
             'input_taxonomy': input_taxonomy,
+            'related_genome_path': related_genome_path,
 
-            'related_ref': related_ref,
             'related_name': related_name,
             'related_taxonomy': related_taxonomy,
 
@@ -139,7 +166,7 @@ def parse_and_write_fastani_output(file_lists, taxonomy_dict, output_csv_path):
         })
 
     # Write parsed data to the output CSV
-    fieldnames = ['input_ref', 'input_name', 'input_taxonomy','related_ref',  'related_name', 
+    fieldnames = ['input_ref', 'input_name', 'input_taxonomy',  'related_name', 'related_genome_path',
                   'related_taxonomy', 'fastani_stat1', 'fastani_stat2', 'alignment_path1', 
                   'image_path1', 'alignment_path2', 'image_path2']
 

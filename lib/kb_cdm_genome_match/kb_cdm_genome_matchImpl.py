@@ -31,6 +31,9 @@ from .utils.fast_ani_report import create_report
 
 from .utils.taxonomy_matcher import find_related_genomes_multiple
 
+from .utils.assembly_saver import KBaseAssemblyManager
+
+
 from installed_clients.WorkspaceClient import Workspace
 
 
@@ -41,21 +44,22 @@ class kb_cdm_genome_match:
     '''
     Module Name:
     kb_cdm_genome_match
+
     Module Description:
-    
+    A KBase module: kb_cdm_genome_match
+This sample module contains one small method that filters contigs.
     '''
-    
-    ######## WARNING FOR GEVENT USERS #######
+
+    ######## WARNING FOR GEVENT USERS ####### noqa
     # Since asynchronous IO can lead to methods - even the same method -
     # interrupting each other, you must be *very* careful when using global
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
-    #########################################
-
+    ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = ""
-    GIT_COMMIT_HASH = ""
-    
+    GIT_URL = "git@github.com:pranjan77/kb_cdm_genome_match.git"
+    GIT_COMMIT_HASH = "e8a29bfcf29cd5da32714a24830a4859e21bbdc6"
+
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
 
@@ -76,7 +80,7 @@ class kb_cdm_genome_match:
         sys.stdout.flush()
 
     #END_CLASS_HEADER
-    
+
     # config contains contents of config file in a hash or None if it couldn't
     # be found
     def __init__(self, config):
@@ -93,9 +97,16 @@ class kb_cdm_genome_match:
         #END_CONSTRUCTOR
         pass
 
+
     def run_kb_cdm_genome_match(self, ctx, params):
+        """
+        This example function accepts any number of parameters and returns results in a KBaseReport
+        :param params: instance of mapping from String to unspecified object
+        :returns: instance of type "ReportResults" -> structure: parameter
+           "report_name" of String, parameter "report_ref" of String
+        """
         # ctx is the context object
-        # return variables are: returnVal
+        # return variables are: output
         #BEGIN run_kb_cdm_genome_match
 
         # Print statements to stdout/stderr are captured and available as the App log
@@ -144,23 +155,29 @@ class kb_cdm_genome_match:
         logging.info (genomeset_taxonomy_data)
         logging.info (related_genomes_only_dict)
         output = dict()
-        allpaths = process_genomes(genomeset_taxonomy_data, related_genomes_only_dict, output_directory, self.callback_url)
+        allpaths, related_path_dict = process_genomes(genomeset_taxonomy_data, related_genomes_only_dict, output_directory, self.callback_url)
         taxonomy_dict = get_taxonomy_all_refs (genomeset_taxonomy_data, related_genomes_only_dict)
         output_csv_path = os.path.join(output_directory, "output.csv")
         output_html = os.path.join(output_directory, "index.html")
-        parse_and_write_fastani_output(allpaths, taxonomy_dict, output_csv_path)
+        parse_and_write_fastani_output(allpaths, related_path_dict, taxonomy_dict, output_csv_path)
         prepare_html(output_csv_path, output_html)
         logging.info (output_html)
         logging.info (output_csv_path)
-        logging.info (allpaths)
+        logging.info ("allpaths" + pformat(allpaths))
+
+        scratch_dir = os.path.join(self.shared_folder, "assemblies") 
+        manager = KBaseAssemblyManager(workspace, self.callback_url, ctx['token'], scratch_dir)
+        manager.save_assemblies_from_csv(output_csv_path)
+        objects_created = manager.print_assembly_mapping()
+
+
         report_creator = HTMLReportCreator(self.callback_url)
-        output = report_creator.create_html_report(output_directory, workspace)
+        output = report_creator.create_html_report(output_directory, workspace, objects_created)
         logging.info (output)
 
 
 
         #END run_kb_cdm_genome_match
-        
 
         # At some point might do deeper type checking...
         if not isinstance(output, dict):
@@ -168,7 +185,6 @@ class kb_cdm_genome_match:
                              'output is not type dict as required.')
         # return the results
         return [output]
-
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

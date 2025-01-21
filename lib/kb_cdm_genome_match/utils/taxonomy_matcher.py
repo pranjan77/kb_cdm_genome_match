@@ -5,7 +5,8 @@ from pathlib import Path
 
 root = Path(__file__).parent  # This should be utils/
 
-merged_path = root / 'upa_taxonomy_kbase.tsv' 
+#merged_path = root / 'upa_taxonomy_kbase.tsv' 
+merged_path = root / 'cdm_genome_expanded_taxonomy_path.tsv'
 
 # Load the merged taxonomy file with genome information
 merged_df = pd.read_csv(merged_path, sep='\t')
@@ -38,7 +39,7 @@ def find_related_genomes(
             if genome not in results:  # Avoid overwriting entries from higher levels
                 results[genome] = {
                     'taxonomy': row['taxonomy'],
-                    'upa': row['upa'],
+                    'filepath': row['filepath'],
                     'match_level': level_names[i],
                 }
         
@@ -76,11 +77,18 @@ def find_related_genomes_multiple(taxon_assignments, max_count, max_level):
 
     related_genome_upa_only_dict = {
         entry["taxon_assignment"]: [
-           genome_info["upa"]
+           genome_info["filepath"]
            for genome_info in entry["related_genomes"].values()
         ]
         for entry in output_results
     }
+
+    print ("===================output results=====================")
+    print (output_results)
+
+    print ("===================related_genomes_upda_only_dict=====================")
+
+    print (related_genome_upa_only_dict)
     
     return (output_results, related_genome_upa_only_dict)
 

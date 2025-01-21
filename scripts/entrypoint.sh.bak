@@ -17,15 +17,6 @@ elif [ "${1}" = "async" ] ; then
   sh ./scripts/run_async.sh
 elif [ "${1}" = "init" ] ; then
   echo "Initialize module"
-  cd /data
-  curl -L -k -o assemblies.tar.gz "https://drive.google.com/uc?export=download&id=1PGAllOo8BbJ6iwRIJJZdJsXQPQl7DIEx" 
-  tar -xvzf assemblies.tar.gz
-  #ln -s /data/assemblies    /data/CDM
-  if [ -d assemblies ] ; then
-  	touch __READY__
-  else
-    echo "Init failed"
-  fi
 elif [ "${1}" = "bash" ] ; then
   bash
 elif [ "${1}" = "report" ] ; then

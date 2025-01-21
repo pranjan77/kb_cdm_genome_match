@@ -13,6 +13,9 @@ from shutil import rmtree
 
 
 
+
+
+
 from kb_cdm_genome_match.kb_cdm_genome_matchImpl import kb_cdm_genome_match
 from kb_cdm_genome_match.kb_cdm_genome_matchServer import MethodContext
 from kb_cdm_genome_match.authclient import KBaseAuth as _KBaseAuth
@@ -23,6 +26,9 @@ from installed_clients.DataFileUtilClient import DataFileUtil
 from installed_clients.GenomeFileUtilClient import GenomeFileUtil
 from installed_clients.WorkspaceClient import Workspace
 from installed_clients.AbstractHandleClient import AbstractHandle
+
+
+from installed_clients.assembly_saver import KBaseAssemblyManager
 
 
 
@@ -69,8 +75,15 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         #cls.wsid = ret[0]
         #print (cls.wsid)
 
-        cls.wsName = "pranjan77:narrative_1734299479897"
-        cls.wsid = 75051
+        #appdev
+
+        cls.wsName = "pranjan77:narrative_1734343659827"
+        cls.wsid = 75058
+
+        # narrative
+
+        #cls.wsName = "pranjan77:narrative_1735963780185"
+        #cls.wsid = 202936
         
         cls.hs = AbstractHandle(cls.cfg['handle-service-url'], token=cls.token)
         cls.au = AssemblyUtil(cls.callback_url, token=cls.token)
@@ -281,22 +294,21 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
 
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    def test_run_kb_cdm_genome_match_ok(self):
-        # call your implementation
-        
-        self.clean_scratch_dir()
-        report = self.serviceImpl.run_kb_cdm_genome_match(self.ctx, { \
-                                                                'workspace_name': self.wsName,
-                                                                'genomeset_ref': "75051/19/2",
-                                                                'output_tree_basename': 'CDM_Match_Tree',
-                                                                'copy_proximals': 0,
-                                                                'save_trees': 0,
-                                                                'db_ver': 214,
-                                                                'keep_intermediates': 0,
-                                                                'dendrogram_report': 0         
-                                                            })[0]
-        #assert self.isUpa (report['report_ref'])
 
  
- 
+    def test_download_assemblies (self):
+         scratch_dir = os.path.join(self.scratch, "assemblies") 
+         manager = KBaseAssemblyManager(self.wsName, self.callback_url, self.token, scratch_dir)
+         
+         csv_file_path = "/kb/module/test/output.csv"
+         manager.save_assemblies_from_csv(csv_file_path)
+         manager.print_assembly_mapping()
+
+
+
+
+
+
+
+        
+    
