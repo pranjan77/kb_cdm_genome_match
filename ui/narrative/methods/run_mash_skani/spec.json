@@ -42,7 +42,7 @@
             "default_values":["0.05"],
 			"field_type": "text",
 			"text_options": {
-				"validate_as": "int"
+				"validate_as": "float"
 			}
         },
 
