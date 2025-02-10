@@ -13,5 +13,6 @@ module kb_cdm_genome_match {
         This example function accepts any number of parameters and returns results in a KBaseReport
     */
     funcdef run_kb_cdm_genome_match(mapping<string,UnspecifiedObject> params) returns (ReportResults output) authentication required;
+    funcdef run_mash_skani (mapping<string,UnspecifiedObject> params) returns (ReportResults output) authentication required;
 
 };

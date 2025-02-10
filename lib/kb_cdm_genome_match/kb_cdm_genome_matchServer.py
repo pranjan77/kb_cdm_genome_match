@@ -342,6 +342,10 @@ class Application(object):
                              name='kb_cdm_genome_match.run_kb_cdm_genome_match',
                              types=[dict])
         self.method_authentication['kb_cdm_genome_match.run_kb_cdm_genome_match'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_cdm_genome_match.run_mash_skani,
+                             name='kb_cdm_genome_match.run_mash_skani',
+                             types=[dict])
+        self.method_authentication['kb_cdm_genome_match.run_mash_skani'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_cdm_genome_match.status,
                              name='kb_cdm_genome_match.status',
                              types=[dict])

@@ -29,7 +29,14 @@ RUN apt-get update && apt-get install -y  r-base wget vim \
     && Rscript -e 'install.packages("genoPlotR", repos="http://R-Forge.R-project.org")'
 
 
+RUN curl -LJO https://github.com/marbl/Mash/releases/download/v2.0/mash-Linux64-v2.0.tar \
+    && tar xvf mash-Linux64-v2.0.tar \
+    && chmod +x mash-Linux64-v2.0/mash \
+    && cp mash-Linux64-v2.0/mash /usr/local/bin
 
+RUN curl -LJO https://github.com/bluenote-1577/skani/releases/download/latest/skani \
+   && chmod +x skani \
+    && cp skani /usr/local/bin
 
 
 RUN pip install -U pip
@@ -47,6 +54,8 @@ RUN pip install -r requirements.txt
 
 RUN pip install pandas
 COPY ./ /kb/module
+
+
 RUN mkdir -p /kb/module/work
 RUN chmod -R a+rw /kb/module
 WORKDIR /kb/module

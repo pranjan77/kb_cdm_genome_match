@@ -93,17 +93,28 @@ class GenomeSetProcessor:
         Returns:
             str: The new_genomeset_ref in the format "workspace_id/object_id/new_version".
         """
-        # Get the genome set information
-        genome_info = self.ws.get_object_info3({
+
+
+        # Get the genomeset name and find the latest genomeset_ref corresponding to that.
+        # This is relevant when gtdb app has updated genomeset ref but the name remains same.
+
+        # genomeset_info looks like the following
+        # [19, 'Archaea_3.GenomeSet', 'KBaseSearch.GenomeSet-2.1', '2024-12-15T22:19:35+0000', 2, 
+        # 'pranjan77', 75051, 'pranjan77:narrative_1734299479897', 'd471d10282fa184f5655ddc14abd541c',
+        #  155, None]
+
+
+        genomeset_info = self.ws.get_object_info3({
             "objects": [{"ref": genomeset_ref}]
         })['infos'][0]
+
         
-        # Construct the genome reference
-        genome_ref = f"{genome_info[7]}/{genome_info[1]}"
+        # Construct the genomeset reference from workspace_name/genomeset_name  
+        ref = f"{genomeset_info[7]}/{genomeset_info[1]}"
         
-        # Get the genome information
+    
         ginfo = self.ws.get_object_info3({
-            "objects": [{"ref": genome_ref}]
+            "objects": [{"ref": ref}]
         })['infos'][0]
         
         # Construct the new genome set reference

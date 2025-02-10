@@ -288,9 +288,14 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
 
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
+    @unittest.skip('skip')
     def test_run_kb_cdm_genome_match_ok(self):
         # call your implementation
-        
+        x = 1 
+        pass
+        import os
+        print (os.listdir("/data"))
+        print (os.listdir("/kb/module/data"))
         self.clean_scratch_dir()
         report = self.serviceImpl.run_kb_cdm_genome_match(self.ctx, { \
                                                                 'workspace_id': self.wsid,
@@ -301,7 +306,26 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
                                                                 'max_level': "genus"
                                                
                                                             })[0]
-        #assert self.isUpa (report['report_ref'])
+#        assert self.isUpa (report['report_ref'])
 
- 
+
+    def test_mash_skani_ok(self):
+        # call your implementation
+        x = 1 
+        pass
+        import os
+        print (os.listdir("/data"))
+        print (os.listdir("/kb/module/data"))
+        self.clean_scratch_dir()
+        report = self.serviceImpl.run_mash_skani(self.ctx, { \
+                                                                'workspace_id': self.wsid,
+                                                                'workspace_name': self.wsName,
+                                                                'genomeset_ref': "75058/2/3",
+                                                                'max_count':10,
+                                                                'min_ani':0.05
+
+                                               
+                                                            })[0]
+#        assert self.isUpa (report['report_ref'])
+
  

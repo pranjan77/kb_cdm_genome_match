@@ -3,10 +3,9 @@ import pandas as pd
 
 from pathlib import Path
 
-root = Path(__file__).parent  # This should be utils/
 
 #merged_path = root / 'upa_taxonomy_kbase.tsv' 
-merged_path = root / 'cdm_genome_expanded_taxonomy_path.tsv'
+merged_path = '/kb/module/genome_taxonomy_data/cdm_genomes_paths_taxonomy.tsv'
 
 # Load the merged taxonomy file with genome information
 merged_df = pd.read_csv(merged_path, sep='\t')

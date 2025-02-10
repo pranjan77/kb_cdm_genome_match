@@ -1,0 +1,59 @@
+#
+# define display information
+#
+name: CDM Genome Finder -  Mash and Skani Similarity
+tooltip: |
+screenshots: []
+
+icon: null
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            [annotate_contigset]
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    genomeset_ref :
+        ui-name : |
+           GenomeSet 
+        short-hint : |
+           GenomeSet
+    max_count :
+        ui-name : |
+           max_count  
+        short-hint : |
+           max_count
+    max_mash_dist :
+        ui-name : |
+           max_mash_dist  
+        short-hint : |
+           max_mash_dist
+    min_ani :
+        ui-name : |
+           min_ani  
+        short-hint : |
+           min_ani
+
+
+
+
+
+
+
+
+
+description : |
+    <p>CDM Genome Match.</p>
