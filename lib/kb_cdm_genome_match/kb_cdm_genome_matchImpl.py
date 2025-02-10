@@ -264,7 +264,6 @@ This sample module contains one small method that filters contigs.
         objects_created = []
         output = report_creator.create_html_report(output_directory, workspace, objects_created)
         logging.info (output)
-        output = dict ()
         #END run_mash_skani
 
         # At some point might do deeper type checking...
