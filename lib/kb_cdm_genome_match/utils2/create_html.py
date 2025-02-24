@@ -16,6 +16,7 @@ def create_datatable_html(csv_filepath, output_filepath="datatable.html", rows_p
 
     try:
         df = pd.read_csv(csv_filepath)
+        df.fillna("", inplace=True)
     except FileNotFoundError:
         print(f"Error: CSV file not found at {csv_filepath}")
         return

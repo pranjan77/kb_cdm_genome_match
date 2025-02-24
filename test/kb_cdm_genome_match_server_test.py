@@ -320,7 +320,7 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         report = self.serviceImpl.run_mash_skani(self.ctx, { \
                                                                 'workspace_id': self.wsid,
                                                                 'workspace_name': self.wsName,
-                                                                'ref_list': ["75058/2/3", "75058/3/1"],
+                                                                'ref_list': ["75058/20/5", "75058/3/1"],
                                                                 'max_count':10,
                                                                 'min_ani':0.05,
                                                                 'max_mash_dist':0.05
@@ -336,7 +336,8 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         from kb_cdm_genome_match.utils2.mash_skani_multiple import mash_skani_pipeline
 
         #ref_list = ["75058/2/3", "75058/3/1"]
-        ref_list = ["75058/3/1", "75058/20/4"]
+        #ref_list = ["75058/3/1", "75058/20/4"]
+        ref_list = ["75058/20/5"]
         ref_fasta_path_dict = download_fasta_files(self.callback_url, ref_list)
         print (ref_fasta_path_dict)
         mash_db = "/data/datafiles/datafiles/sketches/combined_gtdb_sketch_410303_genome.msh"

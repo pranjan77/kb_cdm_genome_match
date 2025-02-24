@@ -14,6 +14,14 @@ def merge_mash_skani_with_sample(mash_skani_file, genome_sample_file, output_fil
     """
     # Load the Mash-Skani results
     mash_skani_df = pd.read_csv(mash_skani_file)
+    if 'reference' not in mash_skani_df.columns:
+    # Create a reference column based on the index (or another logic)
+         mash_skani_df['reference'] = mash_skani_df.index.astype(str)
+
+
+    logging.info("Mash-Skani results loaded")
+
+    logging.info(mash_skani_df)
 
     # Load the genome sample metadata
     genome_sample_df = pd.read_csv(genome_sample_file)
@@ -27,6 +35,8 @@ def merge_mash_skani_with_sample(mash_skani_file, genome_sample_file, output_fil
 
     # Drop the duplicated Accession column (since it's the same as reference)
     merged_df.drop(columns=["Accession"], inplace=True)
+    merged_df.fillna("", inplace=True)
+
 
     # Save the merged output
     merged_df.to_csv(output_file, index=False)
