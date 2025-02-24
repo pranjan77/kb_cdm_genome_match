@@ -11,14 +11,19 @@
     },
     "parameters": [ 
         {
-            "id": "genomeset_ref",
+            "id": "ref_list",
             "optional": false,
             "advanced": false,
-            "allow_multiple": false,
+            "allow_multiple": true,
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ "KBaseSearch.GenomeSet" ]
+                "valid_ws_types": [ "KBaseGenomes.Genome", 
+                                    "KBaseSets.AssemblySet", 
+                                    "KBaseGenomes.ContigSet", 
+                                    "KBaseGenomeAnnotations.Assembly",
+                                    "KBaseSearch.GenomeSet",
+                                    "KBaseSets.GenomeSet" ]
             }
         },
         {
@@ -74,8 +79,8 @@
                     "narrative_system_variable": "workspace_id",
                     "target_property": "workspace_id"
                 },{
-                    "input_parameter": "genomeset_ref",
-                    "target_property": "genomeset_ref",
+                    "input_parameter": "ref_list",
+                    "target_property": "ref_list",
                     "target_type_transform": "resolved-ref"
                 },{
                     "input_parameter": "max_count",

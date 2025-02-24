@@ -26,11 +26,11 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    genomeset_ref :
+    ref_list :
         ui-name : |
-           GenomeSet 
+           ref_list 
         short-hint : |
-           GenomeSet
+           ref_list
     max_count :
         ui-name : |
            max_count  

@@ -2,6 +2,10 @@ import subprocess
 import pandas as pd
 import os
 import logging
+
+from  .calculate_hash import read_fasta2, contig_set_hash
+from .KBaseObjectUtils import append_metadata_to_object
+
 logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
 
@@ -40,7 +44,7 @@ def run_mash_search(query_fasta, mash_db, top_n=10, max_mash_distance=0.05):
     top_matches = mash_results[:top_n]
     return top_matches  
 
-def run_skani(query_fasta, reference_fasta_full_path, min_ani_threshold=95.0):
+def run_skani(ref,query_fasta, reference_fasta_full_path, min_ani_threshold=95.0):
     """
     Runs Skani similarity search between a query genome and a reference genome.
     Filters results based on ANI threshold.
@@ -66,8 +70,12 @@ def run_skani(query_fasta, reference_fasta_full_path, min_ani_threshold=95.0):
 
             query_filename = os.path.basename(query_fasta)  # Extract query filename only
             if ani >= min_ani_threshold:
+                contigs = read_fasta2(ref_genome_path)
+                cdm_hash = contig_set_hash(contigs)
                 return {
+                    "input_ref": ref,
                     "query": query_filename,
+                    "cdm_hash":cdm_hash,
                     "reference": os.path.basename(ref_genome_path),  # Extract only filename
                     "skani": skani_dist,
                     "ani": ani,
@@ -79,19 +87,26 @@ def run_skani(query_fasta, reference_fasta_full_path, min_ani_threshold=95.0):
 
     return None  
 
-def mash_skani_pipeline(query_list, mash_db, taxonomy_file, top_n=10, max_mash_distance=0.05, min_ani_threshold=95.0, output_csv="mash_skani_results.csv"):
+def mash_skani_pipeline(ref_fasta_path_dict, mash_db, taxonomy_file, ws_url, workspace_name, provenance, top_n=10, 
+                        max_mash_distance=0.05, min_ani_threshold=95.0, 
+                        output_csv="mash_skani_results.csv"):
     """
     Runs Mash search, followed by Skani similarity search, and appends taxonomy data.
     Processes multiple query genomes.
+    
+
     """
+
     taxonomy_dict = load_taxonomy_data(taxonomy_file)
     all_results = []
 
-    for query_fasta in query_list:
+    for ref in ref_fasta_path_dict:
+        query_fasta = ref_fasta_path_dict[ref]
         query_filename = os.path.basename(query_fasta)  # Extract query filename only
         logging.info(f"🔹 Running Mash search on {query_filename} against {mash_db}...")
         top_matches = run_mash_search(query_fasta, mash_db, top_n, max_mash_distance)
 
+        ref_cdm_hits_metadata = list()
         for ref_genome_filename, mash_dist in top_matches:
             # Retrieve the full path for Skani
             ref_genome_full_path, taxonomy = taxonomy_dict.get(ref_genome_filename, (None, "Unknown"))
@@ -101,32 +116,23 @@ def mash_skani_pipeline(query_list, mash_db, taxonomy_file, top_n=10, max_mash_d
                 continue
 
             logging.info(f"🔹 Running Skani for {query_filename} vs {ref_genome_filename}...")
-            skani_result = run_skani(query_fasta, ref_genome_full_path, min_ani_threshold)
+            skani_result = run_skani(ref,query_fasta, ref_genome_full_path, min_ani_threshold)
             if skani_result:
+                ref_cdm_hits_metadata.append({"cdm_hash":skani_result["cdm_hash"], "skani":skani_result['skani'],
+                                              "ani":skani_result['ani'], "shared_kmers":skani_result['shared_kmers'],
+                                              "name":ref_genome_filename
+                                              })
                 skani_result["query"] = query_filename  # Store query filename
                 skani_result["mash_distance"] = mash_dist
                 skani_result["taxonomy"] = taxonomy  # Match taxonomy
                 all_results.append(skani_result)
-
+        
+        logging.info(f" =========Now appending Metadata appended to {ref}===============")
+        append_metadata_to_object(ref, ws_url, workspace_name, ref_cdm_hits_metadata,  provenance)
+    
     df = pd.DataFrame(all_results)
     df.to_csv(output_csv, index=False)
-    logging.info(f"✅ Results saved to {output_csv}")
+    logging.info(f"Results saved to {output_csv}")
 
     return df
-
-
-# Example Usage:
-if __name__ == "__main__":
-    query_genome1 = "/data/GTDB_v214/GCA/018/630/425/GCA_018630425.1_ASM1863042v1/GCA_018630425.1_ASM1863042v1_genomic.fna.gz"
-    query_genome2 = "/data/GTDB_v214/GCA/018/263/505/GCA_018263505.1_ASM1826350v1/GCA_018263505.1_ASM1826350v1_genomic.fna.gz"
-    mash_database = "/sketches/sketch_output/temp_sketches/combined_gtdb_sketch_410303_genome.msh"
-
-    query_genomes = [query_genome1, query_genome2]  # List of multiple query FASTA files
-    taxonomy_file = "/kb/module/genome_taxonomy_data/cdm_genomes_paths_taxonomy.tsv"  # Taxonomy file in tab-separated format
-    top_results = 10
-    max_mash_dist = 0.05
-    min_ani = 95.0
-
-    df_results = mash_skani_pipeline(query_genomes, mash_database, taxonomy_file, top_results, max_mash_dist, min_ani)
-    print(df_results)
 

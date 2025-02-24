@@ -320,12 +320,26 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         report = self.serviceImpl.run_mash_skani(self.ctx, { \
                                                                 'workspace_id': self.wsid,
                                                                 'workspace_name': self.wsName,
-                                                                'genomeset_ref': "75058/2/3",
+                                                                'ref_list': ["75058/2/3", "75058/3/1"],
                                                                 'max_count':10,
-                                                                'min_ani':0.05
-
+                                                                'min_ani':0.05,
+                                                                'max_mash_dist':0.05
                                                
                                                             })[0]
 #        assert self.isUpa (report['report_ref'])
 
  
+    @unittest.skip('skip2')
+
+    def test_all_functions(self):
+        from kb_cdm_genome_match.utils2.KBaseObjectUtils import download_fasta_files
+        from kb_cdm_genome_match.utils2.mash_skani_multiple import mash_skani_pipeline
+
+        #ref_list = ["75058/2/3", "75058/3/1"]
+        ref_list = ["75058/3/1"]
+        ref_fasta_path_dict = download_fasta_files(self.callback_url, ref_list)
+        print (ref_fasta_path_dict)
+        mash_db = "/data/datafiles/datafiles/sketches/combined_gtdb_sketch_410303_genome.msh"
+        taxonomy_file = "/data/datafiles/datafiles/genome_taxonomy_data/cdm_genomes_paths_taxonomy.tsv"
+        mash_skani_pipeline(ref_fasta_path_dict, mash_db, taxonomy_file, self.ws_url, self.wsName, 10, 0.05, 95.0, "mash_skani_results.csv")
+        

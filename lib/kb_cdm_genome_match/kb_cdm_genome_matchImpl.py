@@ -39,6 +39,11 @@ from .utils.taxonomy_matcher import find_related_genomes_multiple
 from .utils.assembly_saver import KBaseAssemblyManager
 
 
+from .utils2.KBaseObjectUtils import download_fasta_files
+from .utils2.mash_skani_multiple import mash_skani_pipeline
+
+
+
 from installed_clients.WorkspaceClient import Workspace
 
 
@@ -219,23 +224,25 @@ This sample module contains one small method that filters contigs.
         #mash_database = "/sketches/sketch_output/temp_sketches/combined_gtdb_sketch_410303_genome.msh"
 
         logging.info('Starting run_kb_cdm_genome_match function. Params=' + pformat(params))
-        genomeset_ref = params['genomeset_ref']
+        provenance = ctx['provenance']
 
+
+        ref_list = params['ref_list']
         max_count = params['max_count']
         max_mash_dist = params['max_mash_dist']
         min_ani = params['min_ani']
-
-        assembly_util = AssemblyUtil(self.callback_url)
-        download_data_info = assembly_util.get_fastas({'ref_lst':[genomeset_ref]})
-        query_genomes = [path for entry in download_data_info.values() for path in entry.get('paths', [])]
-        logging.info (query_genomes)
+        workspace_name = params['workspace_name']
 
 
-        mash_database = "/data/datafiles/datafiles/sketches/combined_gtdb_sketch_410303_genome.msh"
-        #taxonomy_file = "/kb/module/genome_taxonomy_data/cdm_genomes_paths_taxonomy.tsv"  # Taxonomy file in tab-separated format
-        taxonomy_file = "/data/datafiles/datafiles/genome_taxonomy_data/cdm_genomes_paths_taxonomy.tsv"  # Taxonomy file in tab-separated format
+
+        logging.info ("=======Downloading fasta files============")
+        ref_fasta_path_dict = download_fasta_files(self.callback_url, ref_list)
+        logging.info (ref_fasta_path_dict)
+
+
+        mash_db = "/data/datafiles/datafiles/sketches/combined_gtdb_sketch_410303_genome.msh"
+        taxonomy_file = "/data/datafiles/datafiles/genome_taxonomy_data/cdm_genomes_paths_taxonomy.tsv"
         genome_sample_file = "/data/datafiles/datafiles/sample_info/genome_sample.csv"
-
 
 
         output_directory = os.path.join(self.shared_folder, "skani_mash_sample")
@@ -245,11 +252,12 @@ This sample module contains one small method that filters contigs.
         skani_mash_sample_csv = os.path.join(output_directory, "skani_mash_sample.csv")
         output_html = os.path.join(output_directory, "index.html")
 
-        workspace = params['workspace_name']
+
 
         logging.info ("=======Running mash and skani pipeline============")
+        mash_skani_pipeline(ref_fasta_path_dict, mash_db, taxonomy_file, self.ws_url, 
+                             workspace_name, provenance, max_count, max_mash_dist, min_ani,skani_mash_csv)
 
-        mash_skani_pipeline(query_genomes, mash_database, taxonomy_file, max_count, max_mash_dist, min_ani, skani_mash_csv)
 
         logging.info ("=======Getting sample information============")
 
@@ -262,7 +270,7 @@ This sample module contains one small method that filters contigs.
 
         report_creator = HTMLReportCreator(self.callback_url)
         objects_created = []
-        output = report_creator.create_html_report(output_directory, workspace, objects_created)
+        output = report_creator.create_html_report(output_directory, workspace_name, objects_created)
         logging.info (output)
         #END run_mash_skani
 
