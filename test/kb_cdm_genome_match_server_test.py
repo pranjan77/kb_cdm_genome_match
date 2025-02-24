@@ -336,7 +336,7 @@ class kb_cdm_genome_matchTest(unittest.TestCase):
         from kb_cdm_genome_match.utils2.mash_skani_multiple import mash_skani_pipeline
 
         #ref_list = ["75058/2/3", "75058/3/1"]
-        ref_list = ["75058/3/1"]
+        ref_list = ["75058/3/1", "75058/20/4"]
         ref_fasta_path_dict = download_fasta_files(self.callback_url, ref_list)
         print (ref_fasta_path_dict)
         mash_db = "/data/datafiles/datafiles/sketches/combined_gtdb_sketch_410303_genome.msh"

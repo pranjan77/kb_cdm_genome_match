@@ -107,6 +107,7 @@ def mash_skani_pipeline(ref_fasta_path_dict, mash_db, taxonomy_file, ws_url, wor
         top_matches = run_mash_search(query_fasta, mash_db, top_n, max_mash_distance)
 
         ref_cdm_hits_metadata = list()
+        count_hits = 0
         for ref_genome_filename, mash_dist in top_matches:
             # Retrieve the full path for Skani
             ref_genome_full_path, taxonomy = taxonomy_dict.get(ref_genome_filename, (None, "Unknown"))
@@ -118,6 +119,7 @@ def mash_skani_pipeline(ref_fasta_path_dict, mash_db, taxonomy_file, ws_url, wor
             logging.info(f"🔹 Running Skani for {query_filename} vs {ref_genome_filename}...")
             skani_result = run_skani(ref,query_fasta, ref_genome_full_path, min_ani_threshold)
             if skani_result:
+                count_hits += 1
                 ref_cdm_hits_metadata.append({"cdm_hash":skani_result["cdm_hash"], "skani":skani_result['skani'],
                                               "ani":skani_result['ani'], "shared_kmers":skani_result['shared_kmers'],
                                               "name":ref_genome_filename
@@ -126,11 +128,15 @@ def mash_skani_pipeline(ref_fasta_path_dict, mash_db, taxonomy_file, ws_url, wor
                 skani_result["mash_distance"] = mash_dist
                 skani_result["taxonomy"] = taxonomy  # Match taxonomy
                 all_results.append(skani_result)
-        
+        if count_hits == 0:
+            skani_result = {"input_ref":ref,
+                           "query":query_filename}
+            all_results.append(skani_result)
         logging.info(f" =========Now appending Metadata appended to {ref}===============")
         append_metadata_to_object(ref, ws_url, workspace_name, ref_cdm_hits_metadata,  provenance)
     
     df = pd.DataFrame(all_results)
+    df.fillna("", inplace=True)
     df.to_csv(output_csv, index=False)
     logging.info(f"Results saved to {output_csv}")
 
