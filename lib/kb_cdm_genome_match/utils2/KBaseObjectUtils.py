@@ -55,16 +55,17 @@ def append_metadata_to_object(object_ref, ws_url, workspace_name, ref_cdm_hits_m
   
     # Append new metadata but ensuring the total metadata length is less than 850 characters
     total_metadata_len = 0
-    new_metadata = list()
+    new_metadata = dict()
     for item in ref_cdm_hits_metadata:
-        total_metadata_len += len(str(item))
-        logging.info(total_metadata_len)
-        if total_metadata_len < 850:
-            new_metadata.append(item)
+        #total_metadata_len += len(str(item))
+        #logging.info(total_metadata_len)
+        #if total_metadata_len < 850:
+        if not new_metadata:
+            new_metadata = item
 
-    
 
-    current_metadata.update({"cdm_hits":str(new_metadata)})
+
+    current_metadata.update({"cdm_best_hit":str(new_metadata)})
 
     # Prepare the object specification for saving
     save_object_params = {

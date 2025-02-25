@@ -28,9 +28,9 @@ suggestions:
 parameters :
     ref_list :
         ui-name : |
-           ref_list 
+           Genomes 
         short-hint : |
-           ref_list
+           Genomes
     max_count :
         ui-name : |
            max_count  

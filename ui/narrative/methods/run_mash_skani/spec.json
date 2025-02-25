@@ -19,9 +19,6 @@
             "field_type": "text",
             "text_options": {
                 "valid_ws_types": [ "KBaseGenomes.Genome", 
-                                    "KBaseSets.AssemblySet", 
-                                    "KBaseGenomes.ContigSet", 
-                                    "KBaseGenomeAnnotations.Assembly",
                                     "KBaseSearch.GenomeSet",
                                     "KBaseSets.GenomeSet" ]
             }
