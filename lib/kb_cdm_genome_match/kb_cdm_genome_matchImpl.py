@@ -192,7 +192,7 @@ This sample module contains one small method that filters contigs.
 
 
         report_creator = HTMLReportCreator(self.callback_url)
-        output = report_creator.create_html_report(output_directory, workspace, objects_created)
+        output = report_creator.create_html_report(output_directory, workspace, objects_created, output_csv_path)
         logging.info (output)
 
 
@@ -270,7 +270,7 @@ This sample module contains one small method that filters contigs.
 
         report_creator = HTMLReportCreator(self.callback_url)
         objects_created = []
-        output = report_creator.create_html_report(output_directory, workspace_name, objects_created)
+        output = report_creator.create_html_report(output_directory, workspace_name, objects_created, skani_mash_sample_csv)
         logging.info (output)
         #END run_mash_skani
 

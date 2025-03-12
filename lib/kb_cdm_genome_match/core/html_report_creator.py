@@ -12,7 +12,7 @@ class HTMLReportCreator:
         self.dfu = DataFileUtil(callback_url)
         self.report = KBaseReport(callback_url)
 
-    def create_html_report(self, output_dir, workspace_name, objects_created):
+    def create_html_report(self, output_dir, workspace_name, objects_created, output_csv_path):
         """
         Creates an HTML report and uploads it to the KBase workspace.
         :param output_dir: Path to the directory containing the report files.
@@ -20,6 +20,12 @@ class HTMLReportCreator:
         :return: Dictionary with the report name and reference.
         """
         report_name = 'kb_cdm_genome_match_report_' + str(uuid.uuid4())
+        file_links = []
+        file_links.append({
+                'path': output_csv_path,
+                'name': 'Genome_matches.csv'
+        })
+
 
         # Upload the directory to Shock
         report_shock_id = self.dfu.file_to_shock({'file_path': output_dir, 'pack': 'zip'})['shock_id']
@@ -36,6 +42,7 @@ class HTMLReportCreator:
         report_info = self.report.create_extended_report({
             'direct_html_link_index': 0,
             'html_links': [html_file],
+            'file_links': file_links,
             'report_object_name': report_name,
             'objects_created': objects_created,
             'workspace_name': workspace_name
